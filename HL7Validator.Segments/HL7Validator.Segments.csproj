@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HL7Validator.Helper\HL7Validator.Helper.csproj" />
+    <ProjectReference Include="..\HL7Validator.Model\HL7Validator.Model.csproj" />
+  </ItemGroup>
+
+</Project>
