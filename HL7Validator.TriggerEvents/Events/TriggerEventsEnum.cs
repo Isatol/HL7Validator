@@ -12,7 +12,8 @@ namespace HL7Validator.TriggerEvents.Events
     {
         [ValidationTriggerEvent(typeof(ADT_A08EventEnum))]
         ADT_A08,
-        
+
+        [ValidationTriggerEvent(typeof(ADT_A01EventEnum))]
         ADT_A01
     }
 }
