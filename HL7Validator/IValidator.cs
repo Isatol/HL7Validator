@@ -13,31 +13,45 @@ namespace HL7Validator
     public interface IValidator
     {
         /// <summary>
-        /// Valida un solo evento HL7 basado en los enums expuestos de '<see cref="HL7Validator.TriggerEvents.Events"/>'
+        /// Valida un mensaje HL7 completo detectando automáticamente el evento HL7 desde el campo <c>MSH.9</c>.
+        ///
+        /// Este método analiza el valor del campo <c>MSH.9</c> (Message Type + Trigger Event),
+        /// lo transforma a su correspondiente enumerador de evento (por ejemplo: <c>ADT_A08</c>),
+        /// y ejecuta todas las validaciones de segmentos y componentes requeridos asociados a dicho evento.
+        ///
+        /// Es la forma estándar y recomendada para validar un mensaje HL7 completo según las reglas oficiales del evento.
+        ///
+        /// Ejemplo:
+        /// - Si el mensaje contiene <c>MSH.9 = ADT^A08</c>, se ejecutarán todas las validaciones del evento <c>ADT_A08</c>.
         /// </summary>
-        /// <typeparam name="TEnum">El tipo de evento</typeparam>
-        /// <param name="triggerEvent">El tipo de evento</param>
-        /// <returns></returns>
+        /// <returns>
+        /// Objeto <see cref="HL7ValidationResult"/> con los campos faltantes encontrados durante la validación.
+        /// </returns>
         public HL7ValidationResult Validate();
 
         /// <summary>
-        /// Valida eventos personalizados de un mensaje HL7 mediante enumeradores definidos por el usuario.
+        /// Valida campos o componentes personalizados de un mensaje HL7 mediante enumeradores definidos por el usuario.
+        ///
+        /// Cada enumerador representa un punto lógico del mensaje HL7, como <c>PID_3</c> para referirse al componente <c>PID.3</c>.
+        /// 
+        /// 🔹 Es recomendable agregar el atributo <see cref="ValidationTargetAttribute"/> que indique el tipo complementario a validar.
+        /// 🔹 Si el atributo no está presente, se intentará resolver el tipo automáticamente mediante una convención interna.
+        ///
+        /// 📌 Importante: los enumeradores deben estar nombrados con guiones bajos (por ejemplo: <c>PID_3</c>, <c>MSH_7</c>),
+        /// ya que esta estructura es utilizada para inferir el validador correspondiente en caso de no tener atributo.
+        ///
+        /// Ejemplo con atributo:
+        /// - Enum: <c>PID_3</c>
+        /// - Atributo: <c>[ValidationTarget(typeof(PID3ComponentsEnum))]</c>
+        /// - Complementario: <c>PID3ComponentsEnum</c> con subcomponentes como <c>PID_3_1</c>, <c>PID_3_5</c>.
+        ///
+        /// Ejemplo sin atributo:
+        /// - Enum: <c>MSH_7</c>
+        /// - El validador correspondiente se resolverá automáticamente si existe uno disponible.
         /// </summary>
-        /// <param name="customValidators">
-        /// Lista de enumeradores que representan campos o componentes específicos a validar.
-        /// 
-        /// Cada enumerador debe representar un punto del mensaje (por ejemplo: <c>PID_3</c> para el componente <c>PID.3</c>).
-        /// 
-        /// Es obligatorio que cada elemento tenga el atributo <see cref="HL7Validator.TriggerEvents.Attributes.ValidationTargetAttribute"/>,
-        /// el cual debe apuntar a su enumerador complementario que contiene los subcomponentes a validar.
-        /// 
-        /// Ejemplo:
-        /// - Enumerador principal: <c>PID_3</c>
-        /// - Atributo: <c>[ValidationTarget(typeof(Segments.PID.Components.PID3ComponentsEnum))]</c>
-        /// - Complementario: <c>PID3ComponentsEnum</c> conteniendo: <c>PID_3_1</c>, <c>PID_3_5</c>, etc.
-        /// </param>
-        /// <returns>Resultado de validación que incluye todos los campos requeridos faltantes encontrados.</returns>
+        /// <param name="customValidators">Enumeradores personalizados a validar</param>
+        /// <returns>Resultado de validación con los campos faltantes detectados</returns>
 
-        public HL7ValidationResult Validate(params Enum[] customValidators);
+        public HL7ValidationResult Validate(params Enum[] customEnum);
     }
 }

@@ -7,4 +7,4 @@ hl7Message = HL7Validator.Sanitizer.HL7Sanitizer.Sanitize(hl7Message);
 
 HL7Validator.IValidator validator = new HL7Validator.Validator(hl7Message);
 
-HL7Validator.Model.HL7ValidationResult result = validator.Validate();
+HL7Validator.Model.HL7ValidationResult result = validator.Validate(HL7Validator.Program.CustomValidatorEnums.CustomSegments.PID_3, HL7Validator.Program.CustomValidatorEnums.CustomSegments.MSH_7);
